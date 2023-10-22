@@ -1,39 +1,48 @@
-import { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useContext } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import { PizzaContext } from '../context/PizzaProvider'
-import { Card } from 'react-bootstrap'
+import { Button, Card } from 'react-bootstrap'
 
 const Pizza = () => {
   const { id } = useParams()
-  const { pizzas } = useContext(PizzaContext)
-  console.log(pizzas)
+  console.log(id)
 
-  const [pizzaDetail, setPizzaDetail] = useState({})
+  const { allPizzas, addToCart } = useContext(PizzaContext)
+  console.log(allPizzas)
+
+  const navigate = useNavigate()
+
+  const pizzaDetail = allPizzas.find((pizza) => pizza.id == id)
   console.log(pizzaDetail)
 
-  const data = () => {
-    const pizzaData = pizzas.find((pizza) => pizza.id === id)
-    console.log(pizzaData)
-
-    setPizzaDetail(pizzaData)
-  }
-
-  useEffect(() => {
-    data()
-  }, [])
-
   return (
-    <div>
-      <Card style={{ width: '18rem' }}>
+    <div className='p-2 d-flex justify-content-center mt-2'>
+      <Card
+        className='bg-dark text-white'
+        style={{ width: '35rem' }}
+      >
         <Card.Img
-          variant='top'
           src={pizzaDetail.img}
+          alt='Card image'
+          className='opacity-25'
         />
-        <Card.Body>
+        <Card.ImgOverlay>
           <Card.Title>{pizzaDetail.name}</Card.Title>
-          <Card.Text>{pizzaDetail.ingredients}</Card.Text>
-          <p>{pizzaDetail.price}</p>
-        </Card.Body>
+          <Card.Text>{pizzaDetail.desc}</Card.Text>
+          <Card.Text className='list-unstyled'>
+            {pizzaDetail.ingredients.map((ingredient, id) => (
+              <li key={id}>🍕 {ingredient}</li>
+            ))}
+          </Card.Text>
+          <Button
+            variant='success'
+            onClick={() => {
+              addToCart(pizzaDetail)
+            }}
+          >
+            Añadir al carrito 😋
+          </Button>
+        </Card.ImgOverlay>
       </Card>
     </div>
   )
